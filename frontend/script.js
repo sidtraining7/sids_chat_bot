@@ -1,12 +1,31 @@
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
 const messagesContainer = document.getElementById('messages-container');
+const menuBtn = document.getElementById('menu-btn');
+const sidebar = document.querySelector('.sidebar');
+
+// Mobile Menu Toggle
+if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768 &&
+        !sidebar.contains(e.target) &&
+        !menuBtn.contains(e.target) &&
+        sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+    }
+});
 
 // Auto-resize textarea
-chatInput.addEventListener('input', function() {
+chatInput.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';
-    
+
     // Enable/disable send button
     if (this.value.trim()) {
         sendBtn.removeAttribute('disabled');
@@ -16,7 +35,7 @@ chatInput.addEventListener('input', function() {
 });
 
 // Handle Enter key
-chatInput.addEventListener('keydown', function(e) {
+chatInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
@@ -54,7 +73,7 @@ async function sendMessage() {
         }
 
         const data = await response.json();
-        
+
         // Remove loading and add AI response
         removeMessage(loadingId);
         appendMessage(data.response, 'ai');
@@ -71,8 +90,8 @@ function appendMessage(text, sender) {
     messageDiv.classList.add('message');
     messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
 
-    const avatarHtml = sender === 'ai' 
-        ? `<div class="message-avatar"><span class="material-symbols-outlined">smart_toy</span></div>` 
+    const avatarHtml = sender === 'ai'
+        ? `<div class="message-avatar"><span class="material-symbols-outlined">smart_toy</span></div>`
         : ''; // No avatar for user in this design, but can be added
 
     // Convert newlines to <br> for display
@@ -94,7 +113,7 @@ function appendLoadingIndicator() {
     const messageDiv = document.createElement('div');
     messageDiv.id = id;
     messageDiv.classList.add('message', 'ai-message');
-    
+
     messageDiv.innerHTML = `
         <div class="message-avatar"><span class="material-symbols-outlined">smart_toy</span></div>
         <div class="message-content">
