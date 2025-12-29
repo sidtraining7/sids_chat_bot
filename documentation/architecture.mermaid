@@ -1,0 +1,35 @@
+graph TD
+    User(("User (Browser/Mobile)"))
+    
+    subgraph "Azure Container App"
+        style ACA fill:#e1f5fe,stroke:#01579b
+        ACA[("Container")]
+        
+        subgraph "FastAPI Server"
+            style BE fill:#fff3e0,stroke:#e65100
+            API["API Endpoints (/api/chat)"]
+            Static["Static File Server (Frontend)"]
+            Logic["Business Logic"]
+        end
+    end
+
+    subgraph "External Services"
+        style Ext fill:#f3e5f5,stroke:#4a148c
+        OpenAI["OpenAI API (GPT-4)"]
+        DDG["DuckDuckGo Search"]
+    end
+
+    User -->|"HTTP/HTTPS (Port 80/443)"| ACA
+    ACA --> API
+    ACA --> Static
+    
+    Static -->|"Serves HTML/JS/CSS"| User
+    
+    API --> Logic
+    Logic -->|"Function Call (Search)"| DDG
+    Logic -->|"Chat Completion"| OpenAI
+    
+    DDG -->|"Search Results"| Logic
+    OpenAI -->|"AI Response"| Logic
+    
+    Logic -->|"JSON Response"| User
